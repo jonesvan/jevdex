@@ -1,0 +1,14 @@
+{
+  "name": "jevdex",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static Wikipedia index (1000 articles) searched with the Jev (TypeSafe) System One API via Defapi",
+  "scripts": {
+    "build": "node scripts/build_index.mjs",
+    "serve": "npx --yes serve public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

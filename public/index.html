@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JevDex — Wikipedia search with Jev</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="brand">
+        <span class="logo">JD</span>
+        <div>
+          <h1>JevDex</h1>
+          <p class="tagline">1000 Wikipedia articles, ranked by the Jev System One API</p>
+        </div>
+      </div>
+      <form id="search-form" class="search" autocomplete="off">
+        <input id="query" type="search" placeholder="Search the index… e.g. black holes, Formula One, quantum computing" aria-label="Search">
+        <button type="submit" id="search-btn">Search</button>
+      </form>
+      <p id="status" class="status">Loading index…</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="key-banner" class="banner hidden">
+      <strong>Add your Defapi API key to enable Jev ranking.</strong>
+      <span>Stored only in this browser (localStorage). Never sent anywhere except the API.</span>
+    </section>
+
+    <details id="settings" class="settings">
+      <summary>Settings</summary>
+      <div class="settings-body">
+        <label for="api-key">API key</label>
+        <div class="key-row">
+          <input id="api-key" type="password" placeholder="dk-…" autocomplete="off">
+          <button id="save-key" type="button">Save</button>
+          <button id="clear-key" type="button" class="ghost">Clear</button>
+        </div>
+        <label for="api-url">System One endpoint URL</label>
+        <input id="api-url" type="text" spellcheck="false" autocomplete="off">
+        <label for="api-model">Model</label>
+        <input id="api-model" type="text" spellcheck="false" autocomplete="off">
+        <button id="save-config" type="button">Save settings</button>
+        <p class="hint">Sends <code>{ state, model, questions }</code> to the endpoint with <code>Authorization: Bearer &lt;key&gt;</code>. Blocks of 200 Choice options, one query.</p>
+        <p id="key-state" class="hint"></p>
+      </div>
+    </details>
+
+    <section id="results" class="grid" aria-live="polite"></section>
+    <p id="empty" class="empty">Type a query to search the JevDex index.</p>
+  </main>
+
+  <footer class="wrap footer">
+    <span>Data: Wikimedia pageviews · Wikipedia summaries (CC BY-SA). Ranking: Jev via Defapi.</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
