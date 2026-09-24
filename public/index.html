@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>JevDex — Wikipedia search with Jev</title>
+  <title>JevDex — Wikipedia search with a local decision model</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
         <span class="logo">JD</span>
         <div>
           <h1>JevDex</h1>
-          <p class="tagline">1000 Wikipedia articles, ranked by the Jev System One API</p>
+          <p class="tagline">1000 Wikipedia articles, ranked by a decision model running in your browser</p>
         </div>
       </div>
       <form id="search-form" class="search" autocomplete="off">
@@ -26,26 +26,50 @@
 
   <main class="wrap">
     <section id="key-banner" class="banner hidden">
-      <strong>Add your Defapi API key to enable Jev ranking.</strong>
-      <span>Stored only in this browser (localStorage). Never sent anywhere except the API.</span>
+      <strong>JevDex ranks results with a decision model.</strong>
+      <span>Laya runs entirely in this browser (nothing you type leaves the page). Switch to the remote Jev API under Settings if you have a key.</span>
     </section>
 
     <details id="settings" class="settings">
       <summary>Settings</summary>
       <div class="settings-body">
-        <label for="api-key">API key</label>
-        <div class="key-row">
-          <input id="api-key" type="password" placeholder="dk-…" autocomplete="off">
-          <button id="save-key" type="button">Save</button>
-          <button id="clear-key" type="button" class="ghost">Clear</button>
+        <label for="engine">Decision engine</label>
+        <select id="engine">
+          <option value="laya">Laya — in-browser (no key, private)</option>
+          <option value="jev">Jev — remote API (needs a key)</option>
+        </select>
+
+        <div id="laya-fields">
+          <label for="laya-base">Laya model base URL</label>
+          <input id="laya-base" type="text" spellcheck="false" autocomplete="off">
+          <label for="laya-variant">Build</label>
+          <select id="laya-variant">
+            <option value="q4e8">int4 (~291 MB, smaller, WebGPU-capable)</option>
+            <option value="q8e8">int8 (~442 MB, closer to the original)</option>
+          </select>
+          <div class="laya-actions">
+            <button id="laya-load" type="button">Load Laya model</button>
+          </div>
+          <div class="progress"><span id="laya-progress"></span></div>
+          <p id="laya-status" class="hint">Not loaded. The weights are fetched from Hugging Face once and cached by the browser.</p>
+          <p class="hint">On a search, JevDex retrieves a short candidate list by keyword and asks Laya (one Choice question, plus a Noul “is this a real topic?” check) to rank it. The whole index cannot be scored at once: Laya reads ~512 tokens of context.</p>
         </div>
-        <label for="api-url">System One endpoint URL</label>
-        <input id="api-url" type="text" spellcheck="false" autocomplete="off">
-        <label for="api-model">Model</label>
-        <input id="api-model" type="text" spellcheck="false" autocomplete="off">
+
+        <div id="jev-fields" class="hidden">
+          <label for="api-key">Jev API key</label>
+          <div class="key-row">
+            <input id="api-key" type="password" placeholder="dk-…" autocomplete="off">
+            <button id="clear-key" type="button" class="ghost">Clear</button>
+          </div>
+          <label for="api-url">System One endpoint URL</label>
+          <input id="api-url" type="text" spellcheck="false" autocomplete="off">
+          <label for="api-model">Model</label>
+          <input id="api-model" type="text" spellcheck="false" autocomplete="off">
+          <p class="hint">Sends <code>{ state, model, questions }</code> with <code>Authorization: Bearer &lt;key&gt;</code>.</p>
+          <p id="key-state" class="hint"></p>
+        </div>
+
         <button id="save-config" type="button">Save settings</button>
-        <p class="hint">Sends <code>{ state, model, questions }</code> to the endpoint with <code>Authorization: Bearer &lt;key&gt;</code>. Blocks of 200 Choice options, one query.</p>
-        <p id="key-state" class="hint"></p>
       </div>
     </details>
 
@@ -54,9 +78,9 @@
   </main>
 
   <footer class="wrap footer">
-    <span>Data: Wikimedia pageviews · Wikipedia summaries (CC BY-SA). Ranking: Jev via Defapi.</span>
+    <span>Data: Wikimedia pageviews · Wikipedia summaries (CC BY-SA). Ranking: <a href="https://github.com/NandhaKishorM/laya" target="_blank" rel="noopener">Laya</a> (Apache-2.0) via ONNX Runtime Web.</span>
   </footer>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
