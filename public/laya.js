@@ -151,6 +151,8 @@ export async function load({ base = getBase(), variant = getVariant() } = {}) {
     let backend = gpu && !noWebGPU ? 'webgpu' : 'wasm';
 
     ort.env.wasm.wasmPaths = new URL('./vendor/', import.meta.url).href;
+    // WebGPU deliberately assigns a few shape/CPU-only ops off-device; those warnings are expected.
+    ort.env.logLevel = 'error';
     ort.env.wasm.numThreads =
       typeof self !== 'undefined' && self.crossOriginIsolated
         ? Math.min(4, navigator.hardwareConcurrency || 2)
